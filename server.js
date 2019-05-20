@@ -20,7 +20,6 @@
 
 const express = require('express');
 const fetch = require('node-fetch');
-const redirectToHTTPS = require('express-http-to-https').redirectToHTTPS;
 const config = require("./config.json");
 
 // CODELAB: Change this to add a delay (ms) before the server responds.
@@ -162,8 +161,12 @@ function getForecast(req, resp) {
 function startServer() {
   const app = express();
 
-  // Redirect HTTP to HTTPS,
-  app.use(redirectToHTTPS([/localhost:(\d{4})/], [], 301));
+  var apiPort = process.env.PORT || config.port;
+  
+  if (apiPort == 8000) {
+    // Redirect HTTP to HTTPS,
+    app.use(redirectToHTTPS([/localhost:(\d{4})/], [], 301));
+  }
 
   // Logging for each request
   app.use((req, resp, next) => {
@@ -183,11 +186,11 @@ function startServer() {
 
   // Handle requests for static files
   app.use(express.static('public'));
-  var apiPort = process.env.PORT || config.port;
+  
   // Start the server
   return app.listen(apiPort, () => {
     // eslint-disable-next-line no-console
-    console.log('Local DevServer Started on port 8000...');
+    console.log('Local DevServer Started on port...');
   });
 }
 
